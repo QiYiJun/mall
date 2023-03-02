@@ -36,24 +36,31 @@ export default {
       pullUpLoad: this.pullUpLoad
     })
 
-    this.bscroll.on('scroll', (position) => {
-      this.$emit('scroll', position)
-    })
+    if (this.probeType !==0) {
+      this.bscroll.on('scroll', (position) => {
+        this.$emit('scroll', position)
+      })
+    }
 
-    this.bscroll.on('pullingUp', () => {
-      this.$emit('pullingUp')
-    })
+    if (this.pullUpLoad) {
+      this.bscroll.on('pullingUp', () => {
+        this.$emit('pullingUp')
+      })
+    }
   },
   methods: {
-    backTop() {
+    scrollTo(x, y, time) {
       // scrollTo(x, y, time/ms)
-      this.bscroll.scrollTo(0, 0, 500)
+      this.bscroll && this.bscroll.scrollTo(x, y, time)
     },
     finishPullUp() {
-      this.bscroll.finishPullUp()
+      this.bscroll && this.bscroll.finishPullUp()
     },
     refresh() {
-      this.bscroll.refresh()
+      this.bscroll && this.bscroll.refresh()
+    },
+    getScrollY() {
+      return this.bscroll ? this.bscroll.y : 0
     }
   },
 }

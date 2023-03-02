@@ -5,7 +5,8 @@
                    :key="index">
         <a :href="banner.link">
           <img :src="banner.image"
-               alt="">
+               alt=""
+               @load="imgLoad">
         </a>
       </swiper-item>
     </swiper>
@@ -21,6 +22,11 @@ export default {
     Swiper,
     SwiperItem
   },
+  data() {
+    return {
+      isLoad: false
+    }
+  },
   props: {
     banners: {
       type: Array,
@@ -28,7 +34,16 @@ export default {
         return []
       }
     }
-  }
+  },
+  methods: {
+    imgLoad() {
+      if (!this.isLoad) {
+        this.$emit('swiperImgLoad')
+        this.isLoad = true
+      }
+      // console.log('------');
+    }
+  },
 }
 </script>
 
