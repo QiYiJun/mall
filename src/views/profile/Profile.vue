@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Profile</h2>
+    <h2>Profile 尚未制作</h2>
   </div>
 </template>
 

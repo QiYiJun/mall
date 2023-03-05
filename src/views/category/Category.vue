@@ -1,7 +1,7 @@
 <template>
   <div>
-    <nav-bar></nav-bar>
-    <h2>Category</h2>
+    <!-- <nav-bar></nav-bar> -->
+    <h2>Category 尚未制作</h2>
   </div>
 </template>
 

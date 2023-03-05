@@ -36,17 +36,16 @@ import NavBar from 'components/common/navBar/NavBar'
 import TabContrl from 'components/content/tabContrl/TabContrl'
 import GoodsList from 'components/content/goods/GoodsList'
 import BetterScroll from 'components/common/betterScroll/BetterScroll'
-import BackTop from 'components/content/backTop/BackTop'
 // 子组件
 import HomeSwiper from './childComps/HomeSwiper'
 import RecommendView from './childComps/RecommendView'
 import FeatureView from './childComps/FeatureView'
-// 函数
+// 函数/mixin
 import {
   getHomeMultidata,
   getHomeGoods
 } from 'network/home'
-import { debounce } from 'common/utils'
+import { itemListenerMixin, backTopMixin } from 'common/mixin'
 
 export default {
   name: 'Home',
@@ -57,8 +56,7 @@ export default {
     FeatureView,
     TabContrl,
     GoodsList,
-    BetterScroll,
-    BackTop
+    BetterScroll
   },
   data() {
     return {
@@ -70,35 +68,34 @@ export default {
         sell: {page: 0, list: []}
       },
       goodsType: 'pop',
-      backTop: false,
       tabOffsetTop: 0,
       isShowTab: false,
       scrollY: 0
     }
   },
+  mixins:[itemListenerMixin, backTopMixin],
   created() {
     this.getHomeMultidata()
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
-  // 记录离开时scrollY的位置, 兼容旧版本scrollY
   activated() {
+    // 返回时回到scrollY的位置
     this.$refs.bscroll.refresh()
     this.$refs.bscroll.scrollTo(0, this.scrollY, 0)
     this.$refs.bscroll.refresh()
   },
   deactivated() {
+    // 记录离开时scrollY的位置
     this.scrollY = this.$refs.bscroll.getScrollY()
-    // console.log(this.scrollY);
-  },
-  mounted() {
-    this.$bus.$on('itemImgLoad', () => {
-      this.debounce(this.$refs.bscroll.refresh, 1000)
-    })
+
+    // 停止监听事件总线中的事件
+    this.$bus.$off('itemImgLoad', this.itemImgListener)
   },
   computed: {
     showGoods() {
+      // console.log(this.goods[this.goodsType].list);
       return this.goods[this.goodsType].list
     }
   },
@@ -126,13 +123,10 @@ export default {
       this.$refs.tabContrl.currentIndex = index
       this.$refs.tabContrlTop.currentIndex = index
     },
-    backTopClick() {
-      this.$refs.bscroll.scrollTo(0, 0, 500)
-    },
     cententScroll(position) {
       // console.log(position)
       // 回到顶部按钮
-      this.backTop = (-position.y) >= 1000
+      this.isShowBackTop(position)
 
       // tabControl显示
       this.isShowTab = (-position.y) >= this.tabOffsetTop
@@ -140,9 +134,6 @@ export default {
     loadMoreGoods() {
       this.getHomeGoods(this.goodsType)
       this.$refs.bscroll.finishPullUp()
-    },
-    debounce(func, delay) { // 防抖
-      debounce(func, delay)
     },
     swiperImgLoad() {
       this.tabOffsetTop = this.$refs.tabContrl.$el.offsetTop
@@ -177,7 +168,7 @@ export default {
 </script>
 
 <style scoped>
-#home{
+#home {
   height: 100vh;
 }
 
