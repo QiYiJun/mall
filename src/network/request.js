@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseURL } from "./aip";
+import { baseURL } from "./api";
 
 export function request (config) {
   const instance = axios.create({

@@ -167,7 +167,9 @@ export default {
       product.desc = this.goods.desc
       product.price = this.goods.realPrice
 
-      this.$store.dispatch('addToCart', product)
+      this.$store.dispatch('addToCart', product).then(res => {
+        this.$toast.show(res)
+      })
     }
   },
   destroyed() {

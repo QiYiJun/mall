@@ -9,7 +9,8 @@
     <div class="price-all">
       合计: {{totalPrice | fixed}}
     </div>
-    <div class="go-pay">
+    <div class="go-pay"
+         @click="goPay">
       付款({{goodsCount}})
     </div>
   </div>
@@ -39,6 +40,11 @@ export default {
           }
         }
       }
+    },
+    goPay() {
+      if (!this.$store.state.cartList.filter(item => item.checked).length) {
+        this.$toast.show('请选择购买的商品')
+      }
     }
   },
   computed: {
@@ -47,7 +53,7 @@ export default {
       return this.cartList.filter(item => {
         return item.checked
       }).reduce((preValue, item) => {
-        return (preValue + item.price * item.count)
+        return preValue + item.price * 100 * item.count
       }, 0)
     },
     goodsCount() {
@@ -59,11 +65,11 @@ export default {
       } else {
         return false
       }
-    },
+    }
   },
   filters: {
     fixed: function(value) {
-      return '¥ ' + value.toFixed(2)
+      return '¥ ' + (value / 100).toFixed(2)
     }
   }
 }
